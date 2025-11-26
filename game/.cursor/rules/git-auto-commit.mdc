@@ -1,3 +1,9 @@
+---
+description: Automatic Git commit workflow - AI MUST commit after every change
+alwaysApply: true
+priority: critical
+---
+
 # Automatic Git Commits
 
 **Project:** Pixel Sandbox Survival AI  
@@ -5,9 +11,11 @@
 
 ---
 
-## CRITICAL RULE: Always Commit Changes
+## ⚠️ CRITICAL RULE: MANDATORY AUTO-COMMIT
 
-**After making ANY changes to the codebase, you MUST automatically commit them to Git.**
+**YOU MUST COMMIT CHANGES IMMEDIATELY AFTER MAKING THEM. THIS IS NOT OPTIONAL.**
+
+**Failure to commit changes is a violation of this rule. Every code change, file creation, or file modification MUST be followed by a Git commit.**
 
 ### When to Commit
 
@@ -20,23 +28,28 @@ Commit changes automatically:
 - ✅ At the end of a work session
 - ✅ Before making major changes
 
-### Commit Process
+### MANDATORY Commit Process
 
-**After making changes, ALWAYS run these commands:**
+**After EVERY change you make, you MUST IMMEDIATELY execute these commands:**
 
 ```bash
-# Navigate to project root (from game/ folder)
+# Step 1: Navigate to project root (if in game/ folder)
 cd ..
 
-# Add all changes
+# Step 2: Check what changed (verify your changes)
+git status
+
+# Step 3: Add all changes
 git add .
 
-# Commit with descriptive message
+# Step 4: Commit with descriptive message (REQUIRED - never skip this)
 git commit -m "Brief description of what was changed"
 
-# Push to GitHub
+# Step 5: Push to GitHub (REQUIRED - never skip this)
 git push
 ```
+
+**This is a MANDATORY workflow step. You cannot skip it. You cannot defer it. You must do it immediately after making changes.**
 
 ### Commit Message Format
 
@@ -90,42 +103,82 @@ git push origin phase-2
 - phase-8: Integration & Testing
 - phase-9: Polish & Release
 
-### Implementation Pattern
+### MANDATORY Implementation Pattern
 
-**Every time you make changes:**
+**This is the REQUIRED workflow for EVERY change:**
 
-1. **Make the changes** (edit files, create files, etc.)
-2. **Immediately commit:**
+1. **Make the changes** (edit files, create files, delete files, etc.)
+2. **STOP - Do not continue until you commit**
+3. **IMMEDIATELY commit (this is MANDATORY):**
    ```bash
    cd ..
    git add .
    git commit -m "Description of changes"
    git push
    ```
-3. **Continue working** or move to next task
+4. **Only then continue** working or move to next task
 
-**DO NOT:**
-- ❌ Leave changes uncommitted
-- ❌ Wait to commit until later
-- ❌ Skip commits
-- ❌ Commit without pushing
+**VIOLATIONS - DO NOT:**
+- ❌ Leave changes uncommitted (VIOLATION)
+- ❌ Wait to commit until later (VIOLATION)
+- ❌ Skip commits (VIOLATION)
+- ❌ Commit without pushing (VIOLATION)
+- ❌ Make multiple changes before committing (VIOLATION - commit after each change)
+- ❌ Say "I'll commit later" (VIOLATION - commit NOW)
 
-### Example Workflow
+**If you make changes, you MUST commit them immediately. There are no exceptions.**
 
-**Scenario: Implementing inventory system**
+### Example Workflows
+
+**Scenario 1: Implementing a new file**
 
 ```bash
 # 1. Create inventory_manager.gd
-# 2. Implement functions
-# 3. Test it works
-# 4. IMMEDIATELY commit:
+# 2. Write the code
+# 3. IMMEDIATELY commit (before doing anything else):
 cd ..
 git add .
-git commit -m "Implement inventory manager with add/remove item functions"
+git commit -m "Add inventory manager with add/remove item functions"
+git push
+# 4. Only then continue with next task
+```
+
+**Scenario 2: Editing an existing file**
+
+```bash
+# 1. Edit player_controller.gd (add movement function)
+# 2. IMMEDIATELY commit (before doing anything else):
+cd ..
+git add .
+git commit -m "Add player movement function to player controller"
+git push
+# 3. Only then continue with next task
+```
+
+**Scenario 3: Multiple related changes**
+
+```bash
+# If making multiple related changes, commit after EACH logical unit:
+# 1. Create file A
+cd ..
+git add .
+git commit -m "Add file A"
 git push
 
-# 5. Continue with next feature...
+# 2. Create file B
+cd ..
+git add .
+git commit -m "Add file B"
+git push
+
+# 3. Edit file C
+cd ..
+git add .
+git commit -m "Update file C"
+git push
 ```
+
+**Remember: Commit frequency is better than committing rarely. Commit after EVERY change.**
 
 ### Helper Script
 
@@ -164,9 +217,22 @@ cd ..
 
 ---
 
+## Enforcement
+
+**This rule is MANDATORY and CRITICAL. Violations are not acceptable.**
+
+**Checklist - After EVERY change, verify:**
+- [ ] Did I make changes? → If YES, proceed to commit
+- [ ] Did I run `git add .`? → If NO, do it now
+- [ ] Did I run `git commit -m "message"`? → If NO, do it now
+- [ ] Did I run `git push`? → If NO, do it now
+- [ ] Are there uncommitted changes? → If YES, commit them NOW
+
+**If you find yourself with uncommitted changes, STOP what you're doing and commit them immediately.**
+
 ## Remember
 
-**This is a CRITICAL rule - always commit changes automatically after making them. Never leave work uncommitted!**
+**This is a MANDATORY CRITICAL rule. You MUST commit changes automatically after making them. Never leave work uncommitted. There are no exceptions.**
 
 ---
 
