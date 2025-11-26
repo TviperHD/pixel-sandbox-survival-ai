@@ -1,0 +1,514 @@
+# Research & Planning Rules
+
+**Project:** Pixel Sandbox Survival AI  
+**Purpose:** Rules for research, planning, and review sessions  
+**Last Updated:** 2025-11-25
+
+---
+
+## Session Type
+
+This is a **research/planning session**, not an implementation session. Focus on:
+- Researching best practices and tools
+- Reviewing existing documentation
+- Discussing design decisions
+- Updating technical specifications
+- Validating completeness
+- Planning next steps
+
+**Do NOT implement code** - only research, review, discuss, and update documentation.
+
+---
+
+## Research Standards
+
+### Research Scope
+
+When researching, you MUST:
+
+1. **Research Best Practices:**
+   - Godot 4 best practices and implementation patterns
+   - General game development best practices
+   - Specific solutions for 2D pixel sandbox survival games
+   - Answer ALL questions about implementation
+
+2. **Find Tools and Resources:**
+   - Godot plugins/extensions that can help
+   - External tools that integrate with Godot
+   - Community resources and tutorials
+   - Documentation and examples
+
+3. **Verify Implementation Approach:**
+   - Ensure the approach will actually work
+   - Confirm it's the best way to do it
+   - Check for potential issues or edge cases
+   - Validate performance considerations
+
+4. **Document Everything:**
+   - Document all research findings
+   - Link sources (URLs, documentation, tutorials)
+   - Cite specific resources when updating specs
+   - Note any tools or plugins discovered
+
+### Research Documentation Format
+
+When documenting research in specifications:
+
+```markdown
+## Research Notes
+
+### [Topic/Question]
+
+**Research Findings:**
+- Finding 1: [description]
+- Finding 2: [description]
+
+**Sources:**
+- [Source Name](URL) - [brief description]
+- [Source Name](URL) - [brief description]
+
+**Tools/Resources Found:**
+- [Tool/Plugin Name](URL) - [description and how it helps]
+
+**Implementation Approach:**
+[How we'll implement this based on research]
+
+**Why This Approach:**
+[Why this is the best way]
+```
+
+### Research Depth
+
+- **Primary:** High-level best practices and patterns
+- **Secondary:** Detailed implementation approaches when needed
+- **Always Include:** How it will be implemented, why it's the best way, and any tools/resources found
+
+---
+
+## Review Standards
+
+### Technical Specification Review Checklist
+
+When reviewing a specification, verify it has:
+
+- [ ] **Header:** Date, Status, Version
+- [ ] **Overview:** Brief description
+- [ ] **Research Notes:** With sources and findings
+- [ ] **Data Structures:** Complete class definitions
+- [ ] **Core Classes:** Function signatures
+- [ ] **System Architecture:** Component hierarchy, data flow
+- [ ] **Algorithms:** Implementation details
+- [ ] **Integration Points:** System connections
+- [ ] **Save/Load System:** Data persistence
+- [ ] **Performance Considerations:** Optimization strategies
+- [ ] **Testing Checklist:** Verification items
+- [ ] **Error Handling:** Error management
+- [ ] **Default Values:** Configuration defaults
+- [ ] **Complete Implementation:** Full code examples
+- [ ] **Setup Instructions:** Implementation steps
+- [ ] **Tools and Resources:** Required tools (only actively used)
+- [ ] **References:** Documentation links
+
+### Completeness Check
+
+Verify:
+- All sections filled
+- Research-backed (sources cited)
+- Implementation-ready (detailed enough to implement)
+- Modular and configurable
+- Integration points clear
+- No ambiguous requirements
+
+### Consistency Check
+
+Verify:
+- Naming conventions consistent (PascalCase classes, snake_case variables)
+- Architecture patterns consistent
+- Integration patterns consistent
+- Documentation format consistent
+- No contradictions between specs
+
+---
+
+## Update Standards
+
+### When to Update
+
+Update specifications when:
+- Research reveals a better approach
+- Inconsistencies or gaps are found
+- Integration points need clarification
+- Better tools/resources are discovered
+- Implementation details need expansion
+- User requests changes
+
+### How to Update
+
+1. **Add Research Section:**
+   - Add "Research Notes" section with findings
+   - Link all sources
+   - Document tools/resources found
+
+2. **Update Implementation:**
+   - Update algorithms/approaches based on research
+   - Add implementation details where needed
+   - Ensure everything is research-backed
+
+3. **Cite Sources:**
+   - Link sources inline where relevant
+   - Add "References" section at end of spec
+   - Include tool/plugin links
+
+4. **Update Related Docs:**
+   - Update `03-planning/technical-specs-index.md` if needed
+   - Update `03-planning/SPEC_REVIEW.md` if major changes
+   - Update `05-decisions/decision-log.md` for significant decisions
+
+### Update Format
+
+```markdown
+## Research Notes
+
+### [Specific Topic]
+
+**Finding:** [What was discovered]
+
+**Source:** [Name](URL)
+
+**Impact:** [How this affects our implementation]
+
+**Update Made:** [What was changed in the spec]
+```
+
+---
+
+## Discussion Guidelines
+
+### When Discussing Design Decisions
+
+1. **Present Options:**
+   - Research multiple approaches
+   - Present pros/cons of each
+   - Recommend best option with rationale
+
+2. **Ask Clarifying Questions:**
+   - **ONE question at a time**
+   - Wait for answer before proceeding
+   - Don't assume preferences
+   - Don't move on until user confirms
+
+3. **Document Decisions:**
+   - Update `05-decisions/decision-log.md`
+   - Update relevant specifications
+   - Note rationale and consequences
+
+### Decision Log Format
+
+```markdown
+### [YYYY-MM-DD] - [Decision Topic]
+
+**Context:** [Why this decision is needed]
+**Options Considered:** 
+- Option 1: [description]
+- Option 2: [description]
+**Decision:** [What was chosen]
+**Rationale:** [Why this option was chosen]
+**Consequences:** [What this means for the project]
+```
+
+### When Reviewing Specifications
+
+1. **Read the Spec Thoroughly:**
+   - Understand the system completely
+   - Check all sections
+   - Verify completeness
+
+2. **Check Integration Points:**
+   - Verify dependencies are correct
+   - Check integration with other systems
+   - Ensure no circular dependencies
+
+3. **Validate Implementation Readiness:**
+   - Is it detailed enough to implement?
+   - Are all questions answered?
+   - Are examples provided?
+
+4. **Suggest Improvements:**
+   - Point out gaps or inconsistencies
+   - Suggest better approaches if found
+   - Recommend additional research if needed
+
+---
+
+## Research Workflow
+
+### For Research Tasks
+
+1. **Understand the Question:**
+   - What exactly needs to be researched?
+   - What's the context?
+   - What's already known?
+
+2. **Perform Research:**
+   - Search for best practices
+   - Find relevant tools/resources
+   - Verify approaches will work
+   - Check performance implications
+
+3. **Document Findings:**
+   - Use research documentation format
+   - Link all sources
+   - Note tools/resources found
+   - Explain implementation approach
+
+4. **Discuss with User:**
+   - Present findings
+   - Discuss options if multiple approaches
+   - Get confirmation before updating specs
+
+5. **Update Documentation:**
+   - Update relevant specification
+   - Update research notes if needed
+   - Update decision log if decision made
+
+### For Review Tasks
+
+1. **Read Documentation:**
+   - Read the spec/document thoroughly
+   - Check related documents
+   - Understand context
+
+2. **Validate Completeness:**
+   - Check all required sections present
+   - Verify research-backed
+   - Confirm implementation-ready
+
+3. **Check Consistency:**
+   - Verify naming conventions
+   - Check architecture patterns
+   - Ensure no contradictions
+
+4. **Report Findings:**
+   - List what's complete
+   - List what's missing
+   - List inconsistencies found
+   - Suggest improvements
+
+---
+
+## Important Principles
+
+### Research Principles
+
+- **Thorough:** Research multiple approaches, not just one
+- **Source Everything:** Always cite sources, link URLs
+- **Verify:** Ensure approaches will actually work
+- **Document:** Document all findings, even if not used
+- **Discuss First:** Present findings and discuss before updating
+
+### Review Principles
+
+- **Thorough:** Read everything, don't skim
+- **Critical:** Question assumptions, check consistency
+- **Constructive:** Suggest improvements, not just criticize
+- **Complete:** Check all aspects, not just one
+
+### Update Principles
+
+- **Research-Backed:** Only update based on research or user input
+- **Consistent:** Maintain consistency with other specs
+- **Complete:** Update all related sections
+- **Documented:** Document why changes were made
+- **User Confirmed:** Get user confirmation before major updates
+
+---
+
+## Common Tasks
+
+### Research a New System
+
+1. Research best practices for the system
+2. Find tools/resources that can help
+3. Verify implementation approach
+4. Document findings in research format
+5. **Discuss with user** (present options, get confirmation)
+6. Create/update technical specification
+
+### Review a Specification
+
+1. Read specification thoroughly
+2. Check completeness (all sections present)
+3. Check research (sources cited)
+4. Check implementation readiness (detailed enough)
+5. Check consistency (naming, patterns)
+6. Report findings and suggest improvements
+
+### Update a Specification
+
+1. Research better approach (if needed)
+2. **Discuss with user** (present findings, get confirmation)
+3. Update relevant sections
+4. Add research notes with sources
+5. Update related documents (index, review)
+6. Verify consistency maintained
+7. Document changes in decision log (if significant)
+
+### Discuss Design Decision
+
+1. Research multiple options
+2. Present options with pros/cons
+3. **Ask user preference** (one question at a time)
+4. **Wait for answer** before proceeding
+5. Document decision in decision log
+6. Update relevant specifications
+7. Note rationale and consequences
+
+---
+
+## Critical Rules
+
+### DO:
+
+✅ Research thoroughly (multiple sources)  
+✅ Source everything (cite URLs, link documentation)  
+✅ Verify approaches will work  
+✅ Document all findings  
+✅ Ask ONE question at a time  
+✅ Wait for answer before proceeding  
+✅ Discuss before updating specs  
+✅ Get user confirmation for major changes  
+✅ Update decision log for significant decisions  
+✅ Maintain consistency across specs  
+✅ Check integration points  
+✅ Validate completeness  
+
+### DON'T:
+
+❌ Don't implement code (this is planning session)  
+❌ Don't assume preferences  
+❌ Don't ask multiple questions at once  
+❌ Don't move on without user confirmation  
+❌ Don't update specs without discussing first  
+❌ Don't skip research  
+❌ Don't forget to cite sources  
+❌ Don't ignore consistency  
+❌ Don't skip completeness checks  
+❌ Don't make decisions without user input  
+
+---
+
+## Question Guidelines
+
+### When to Ask Questions
+
+- When clarification is needed
+- When multiple options exist
+- When preferences are unclear
+- When constraints are unknown
+
+### How to Ask Questions
+
+- **ONE question at a time**
+- Be specific and clear
+- Provide context
+- Wait for answer before proceeding
+- Don't assume answers
+
+### Example Good Questions
+
+- "For the crafting system, should crafting be instant or have a time delay?"
+- "What should be the starting inventory size?"
+- "Should the AI system use pre-trained models, train from scratch, or both?"
+
+### Example Bad Questions
+
+- "What should the crafting system be like, what about inventory size, and how should AI work?" (too many at once)
+- "Should we use approach A?" (without presenting options)
+
+---
+
+## Documentation Locations
+
+### Technical Specifications
+- **Index:** `03-planning/technical-specs-index.md`
+- **Individual Specs:** `03-planning/technical-specs-*.md`
+- **Review:** `03-planning/SPEC_REVIEW.md`
+- **Standards:** `03-planning/specification-standards.md`
+
+### Research Documents
+- **Research Notes:** `02-research/*.md`
+- **Decision Log:** `05-decisions/decision-log.md`
+
+### Planning Documents
+- **Architecture:** `03-planning/technical-architecture.md`
+- **Roadmap:** `03-planning/development-roadmap.md`
+- **Validation:** `03-planning/validation-review.md`
+
+### Project Documentation
+- **Project README:** `README.md`
+- **Project Overview:** `game/PROJECT_OVERVIEW.md`
+
+---
+
+## Workflow Examples
+
+### Example: Researching a New Feature
+
+1. **User asks:** "Research how to implement a weather system"
+2. **Research:**
+   - Search Godot weather system best practices
+   - Find weather plugins/tools
+   - Research performance considerations
+   - Document findings with sources
+3. **Present:** Show findings, options, recommendations
+4. **Discuss:** Ask user preferences (one at a time)
+5. **Update:** Create/update technical specification
+6. **Document:** Update decision log if needed
+
+### Example: Reviewing a Specification
+
+1. **User asks:** "Review the combat system spec"
+2. **Read:** Read `technical-specs-combat.md` thoroughly
+3. **Check:**
+   - All sections present?
+   - Research-backed?
+   - Implementation-ready?
+   - Consistent with other specs?
+4. **Report:**
+   - What's complete
+   - What's missing
+   - Inconsistencies found
+   - Suggestions for improvement
+
+### Example: Updating a Specification
+
+1. **User asks:** "Update the inventory spec to support auto-pickup"
+2. **Research:** Research auto-pickup best practices
+3. **Discuss:** Present findings, get confirmation
+4. **Update:**
+   - Add research notes
+   - Update data structures
+   - Update core classes
+   - Update integration points
+5. **Verify:** Check consistency with other specs
+6. **Document:** Update decision log
+
+---
+
+## Remember
+
+- **This is a planning session** - Don't implement code
+- **Research thoroughly** - Multiple sources, verify approaches
+- **Document everything** - Sources, findings, tools
+- **Ask one question at a time** - Wait for answer before proceeding
+- **Discuss before updating** - Get confirmation on changes
+- **Maintain consistency** - Follow project standards
+- **Check completeness** - All sections, research-backed, implementation-ready
+
+---
+
+**See also:**
+- `RESEARCH_PLANNING_SESSION.md` - Full session prompt
+- `03-planning/specification-standards.md` - Specification standards
+- `code-standards.mdc` - Code standards (for reference)
+- `godot-patterns.mdc` - Godot patterns (for reference)

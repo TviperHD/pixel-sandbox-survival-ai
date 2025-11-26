@@ -1,0 +1,392 @@
+# Code Standards
+
+**Project:** Pixel Sandbox Survival AI  
+**Engine:** Godot 4.x  
+**Language:** GDScript  
+**Last Updated:** 2025-11-25
+
+## Project Context
+
+This is a 2D pixel sandbox survival game built in Godot 4.x. The game features:
+- Pixel-level physics simulation (inspired by Noita)
+- Survival mechanics (inspired by Terraria)
+- Deep learning AI enemies (inspired by Arc Raiders)
+- Procedural world generation
+- Complex crafting and building systems
+- Multiplayer/co-op support
+
+**Important:** All implementation must follow the technical specifications in `../03-planning/technical-specs-*.md` files. These specs are comprehensive and implementation-ready.
+
+---
+
+## Naming Conventions
+
+**STRICTLY FOLLOW these conventions:**
+
+### Classes: PascalCase
+```gdscript
+class_name PlayerController
+class_name GameManager
+class_name ItemDatabase
+```
+
+### Variables: snake_case
+```gdscript
+var player_speed: float = 200.0
+var is_running: bool = false
+var current_health: int = 100
+```
+
+### Functions: snake_case
+```gdscript
+func handle_input() -> void
+func apply_damage(amount: float) -> void
+func get_item_count(item_id: String) -> int
+```
+
+### Constants: UPPER_SNAKE_CASE
+```gdscript
+const WALK_SPEED: float = 200.0
+const MAX_INVENTORY_SLOTS: int = 20
+const GRAVITY: float = 980.0
+```
+
+### Nodes/Scenes: PascalCase
+```gdscript
+# Node names
+@onready var player: CharacterBody2D = $Player
+@onready var camera: Camera2D = $Camera2D
+
+# Scene files: Player.tscn, Main.tscn, HUD.tscn
+```
+
+### Script Files: snake_case for scripts, PascalCase for scenes
+```
+player_controller.gd
+game_manager.gd
+Player.tscn
+Main.tscn
+```
+
+### Resources: PascalCase
+```gdscript
+@export var item_data: ItemData
+@export var recipe: CraftingRecipe
+```
+
+---
+
+## Type Hints
+
+**ALWAYS use type hints:**
+
+```gdscript
+# Good
+var health: int = 100
+var speed: float = 200.0
+var player: CharacterBody2D
+func move_player(direction: Vector2) -> void
+func get_item(item_id: String) -> ItemData
+
+# Bad
+var health = 100
+var speed = 200.0
+func move_player(direction)
+```
+
+**Rules:**
+- Always specify types for variables
+- Always specify return types for functions
+- Use `-> void` for functions that don't return a value
+- Use `-> Type` for functions that return a value
+
+---
+
+## Code Organization
+
+**Follow this structure in every script:**
+
+```gdscript
+class_name ClassName
+extends BaseClass
+
+# === CONSTANTS ===
+const CONSTANT_NAME: Type = value
+
+# === SIGNALS ===
+signal signal_name(param: Type)
+
+# === EXPORTS ===
+@export var exported_var: Type = default_value
+
+# === PUBLIC VARIABLES ===
+var public_var: Type
+
+# === PRIVATE VARIABLES ===
+var _private_var: Type
+
+# === ONREADY REFERENCES ===
+@onready var node_reference: Node = $NodePath
+
+# === INITIALIZATION ===
+func _ready() -> void:
+    pass
+
+# === PUBLIC FUNCTIONS ===
+func public_function() -> void:
+    pass
+
+# === PRIVATE FUNCTIONS ===
+func _private_function() -> void:
+    pass
+```
+
+**Section Order:**
+1. Constants
+2. Signals
+3. Exports
+4. Public variables
+5. Private variables (prefixed with `_`)
+6. @onready references
+7. Initialization (`_ready`, `_enter_tree`, etc.)
+8. Public functions
+9. Private functions (prefixed with `_`)
+
+---
+
+## Project Structure
+
+**STRICTLY follow this directory structure:**
+
+```
+game/
+├── scenes/
+│   ├── main/          # Main scenes
+│   ├── player/        # Player scenes
+│   ├── enemies/       # Enemy scenes
+│   ├── npcs/          # NPC scenes
+│   ├── ui/            # UI scenes
+│   ├── world/         # World/environment scenes
+│   ├── items/         # Item pickup scenes
+│   └── buildings/     # Building piece scenes
+├── scripts/
+│   ├── player/        # Player scripts
+│   ├── managers/      # Manager singletons
+│   ├── enemies/       # Enemy scripts
+│   ├── npcs/          # NPC scripts
+│   ├── ui/            # UI scripts
+│   ├── world/         # World generation scripts
+│   ├── items/         # Item scripts
+│   ├── buildings/     # Building scripts
+│   ├── camera/        # Camera scripts
+│   └── utils/         # Utility scripts
+├── assets/
+│   ├── sprites/       # Sprite images
+│   ├── audio/         # Audio files
+│   ├── fonts/         # Font files
+│   └── particles/     # Particle effects
+├── resources/
+│   ├── items/         # Item data resources
+│   ├── recipes/       # Crafting recipe resources
+│   ├── buildings/     # Building piece resources
+│   ├── dialogue/      # Dialogue data resources
+│   ├── quests/        # Quest data resources
+│   ├── biomes/        # Biome data resources
+│   ├── materials/     # Pixel physics material resources
+│   └── settings/      # Settings resources
+└── autoload/          # Autoload singleton scripts (or use scripts/managers/)
+```
+
+**Rules:**
+- Place scripts in appropriate subdirectories
+- Use PascalCase for scene files (.tscn)
+- Use snake_case for script files (.gd)
+- Keep resources organized by type
+- Maintain consistent structure across the project
+
+---
+
+## Code Style
+
+**Follow GDScript style guide:**
+
+### Spacing
+```gdscript
+# Good
+if condition:
+    do_something()
+
+# Bad
+if condition:do_something()
+```
+
+### Line Length
+- Keep under 100 characters when possible
+- Break long lines at logical points
+- Use parentheses for multi-line expressions
+
+### Grouping
+```gdscript
+# Movement
+func handle_movement() -> void:
+    pass
+
+# Combat
+func handle_combat() -> void:
+    pass
+```
+
+### Comments
+- Use `#` for single-line comments
+- Use `##` for documentation comments (appears in editor)
+- Comment complex logic, not obvious code
+- Keep comments up-to-date with code
+
+---
+
+## Implementation Standards
+
+### Modularity and Configurability
+
+**ALL systems MUST be:**
+
+1. **Extremely Modular:**
+   - Systems can work independently
+   - Clear interfaces between systems
+   - Easy to add/remove features
+   - Component-based architecture
+   - No god objects
+
+2. **Highly Configurable:**
+   - Settings exposed via `@export` variables
+   - Use Resource files (.tres) for data
+   - No hardcoded values (use constants/resources)
+   - Easy to tweak without code changes
+   - Player-accessible settings where appropriate
+
+3. **Easy to Extend:**
+   - Clear extension points
+   - Plugin-friendly architecture
+   - Well-documented APIs
+   - Example implementations
+
+### Example: Configurable System
+
+```gdscript
+# Good - Configurable
+class_name WeaponData
+extends Resource
+
+@export var damage: int = 10
+@export var attack_speed: float = 1.0
+@export var range: float = 100.0
+
+# Bad - Hardcoded
+const DAMAGE = 10
+const ATTACK_SPEED = 1.0
+```
+
+### Resource-Based Design
+
+**ALWAYS use Resources for data:**
+
+```gdscript
+# Create Resource class
+class_name ItemData
+extends Resource
+
+@export var item_id: String
+@export var item_name: String
+@export var max_stack_size: int = 99
+
+# Use in scripts
+@export var item_data: ItemData  # Created in editor as .tres file
+```
+
+**Benefits:**
+- Editor-friendly (create in Godot editor)
+- Type-safe
+- Easy to modify without code
+- Supports visual editing
+
+### Editor Support
+
+**When implementing systems:**
+
+1. **Use @export for configuration:**
+   ```gdscript
+   @export var walk_speed: float = 200.0
+   @export var jump_velocity: float = -500.0
+   ```
+
+2. **Create Resources for complex data:**
+   ```gdscript
+   @export var item_data: ItemData
+   @export var recipe: CraftingRecipe
+   ```
+
+3. **Place items/entities visually in scenes:**
+   - Don't hardcode positions
+   - Use scene placement + @export for positions
+   - Or use Resource files with visual editors
+
+---
+
+## Documentation Standards
+
+**ALWAYS document:**
+
+### Class Documentation
+```gdscript
+## Manages player inventory, including items, equipment, and storage containers.
+## Provides functions for adding, removing, and querying items.
+class_name InventoryManager
+extends Node
+```
+
+### Function Documentation
+```gdscript
+## Adds an item to the inventory.
+## @param item_id: The ID of the item to add
+## @param quantity: The quantity to add (default: 1)
+## @return: True if item was added successfully, false otherwise
+func add_item(item_id: String, quantity: int = 1) -> bool:
+    pass
+```
+
+### Complex Logic Comments
+```gdscript
+# Calculate damage with modifiers
+# Base damage * (1 + attack_bonus) * (1 - defense_reduction)
+var final_damage = base_damage * (1.0 + attack_bonus) * (1.0 - defense_reduction)
+```
+
+---
+
+## Critical Rules
+
+### DO:
+
+✅ Always use type hints  
+✅ Always follow naming conventions  
+✅ Always use Resources for data  
+✅ Always make systems modular and configurable  
+✅ Always document code  
+✅ Always use @export for configuration  
+✅ Always organize code in the standard structure  
+
+### DON'T:
+
+❌ Don't hardcode values  
+❌ Don't create god objects  
+❌ Don't ignore type hints  
+❌ Don't violate naming conventions  
+❌ Don't skip documentation  
+❌ Don't place files in wrong directories  
+
+---
+
+**See also:**
+- `godot-patterns.mdc` - Godot-specific patterns and best practices
+- `system-integration.mdc` - How systems communicate
+- `implementation-workflow.mdc` - Implementation workflow and common patterns

@@ -1,0 +1,98 @@
+# Godot-specific ignores
+.godot/
+*.godot/
+.import/
+export.cfg
+export_presets.cfg
+
+# Godot-specific ignores (Godot 4.x)
+.godot/
+.import/
+*.tmp
+*.translation
+
+# Imported translations (automatically generated from CSV files)
+*.translation
+
+# Mono-specific ignores (C# projects)
+.mono/
+data_*/
+mono_crash.*.json
+
+# System files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# IDE - VSCode
+.vscode/
+*.code-workspace
+
+# IDE - JetBrains Rider
+.idea/
+*.sln.iml
+
+# Build files
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Logs
+*.log
+
+# OS files
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.bak
+*.cache
+
+# User-specific files
+user://
+
+# Backup files
+*.backup
+*.orig
+
+# Python (if using Python scripts)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# Node modules (if using any Node.js tools)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Compiled files
+*.class
+*.jar
+*.war
+*.ear
+
+# Package files
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+

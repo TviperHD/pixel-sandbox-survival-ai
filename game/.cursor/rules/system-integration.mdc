@@ -1,0 +1,363 @@
+# System Integration
+
+**Project:** Pixel Sandbox Survival AI  
+**Engine:** Godot 4.x  
+**Language:** GDScript  
+**Last Updated:** 2025-11-25
+
+---
+
+## Manager Communication
+
+### Hybrid Pattern
+
+**Combine signals and direct calls:**
+
+- **Signals for events** (decoupled, one-way)
+- **Direct calls for queries** (simple, efficient, return values)
+
+### Example: Event Communication
+
+```gdscript
+# Event - Signal (decoupled)
+signal item_added(item_id: String, quantity: int)
+item_added.emit("iron_ore", 10)
+
+# Multiple systems can listen
+# - UI updates inventory display
+# - Achievement system checks for milestones
+# - Quest system checks objectives
+```
+
+### Example: Query Communication
+
+```gdscript
+# Query - Direct call (simple, efficient)
+var count = InventoryManager.get_item_count("iron_ore")
+var has_item = InventoryManager.has_item("iron_ore")
+var player_pos = PlayerController.get_position()
+```
+
+---
+
+## System Dependencies
+
+### Check Dependencies Before Accessing
+
+**Always validate dependencies:**
+
+```gdscript
+func craft_item(recipe_id: String) -> bool:
+    # Check dependencies exist
+    if not ItemDatabase.has_item(recipe_id):
+        push_error("Recipe not found: %s" % recipe_id)
+        return false
+    
+    if InventoryManager == null:
+        push_error("InventoryManager not available")
+        return false
+    
+    if CraftingManager == null:
+        push_error("CraftingManager not available")
+        return false
+    
+    # Use systems
+    var recipe = ItemDatabase.get_recipe(recipe_id)
+    if not InventoryManager.has_ingredients(recipe.ingredients):
+        return false
+    
+    return CraftingManager.craft_recipe(recipe_id)
+```
+
+### Dependency Order
+
+**Respect initialization order:**
+
+1. Foundation systems (GameManager, InputManager)
+2. Data systems (ItemDatabase)
+3. Gameplay systems (Inventory, Crafting, Combat)
+4. Content systems (NPC, Dialogue, Quest)
+5. UI systems (HUD, Menus)
+
+**Don't access systems before they're initialized:**
+
+```gdscript
+func _ready() -> void:
+    # Wait for dependencies
+    await get_tree().process_frame
+    
+    # Now safe to access
+    if ItemDatabase:
+        ItemDatabase.item_registered.connect(_on_item_registered)
+```
+
+---
+
+## Integration Points
+
+### Document Integration Points Clearly
+
+**Show how systems connect:**
+
+```gdscript
+# Integration with SurvivalManager
+func apply_damage(amount: float) -> void:
+    if SurvivalManager != null:
+        SurvivalManager.apply_damage(amount)
+    else:
+        push_warning("SurvivalManager not available")
+
+# Integration with InventoryManager
+func consume_item(item_id: String, quantity: int = 1) -> bool:
+    if InventoryManager == null:
+        push_error("InventoryManager not available")
+        return false
+    
+    return InventoryManager.remove_item(item_id, quantity)
+```
+
+### Integration Patterns
+
+**1. Manager-to-Manager:**
+
+```gdscript
+# CraftingManager uses InventoryManager
+func craft_recipe(recipe_id: String) -> bool:
+    var recipe = ItemDatabase.get_recipe(recipe_id)
+    
+    # Check ingredients
+    if not InventoryManager.has_ingredients(recipe.ingredients):
+        return false
+    
+    # Consume ingredients
+    for ingredient in recipe.ingredients:
+        InventoryManager.remove_item(ingredient.item_id, ingredient.quantity)
+    
+    # Add result
+    InventoryManager.add_item(recipe.result_id, recipe.result_quantity)
+    return true
+```
+
+**2. System-to-System via Signals:**
+
+```gdscript
+# CombatManager emits signal
+signal enemy_killed(enemy_id: String, xp: int)
+
+func kill_enemy(enemy: Enemy) -> void:
+    var xp = enemy.get_xp()
+    enemy_killed.emit(enemy.enemy_id, xp)
+
+# ProgressionManager listens
+func _ready() -> void:
+    if CombatManager:
+        CombatManager.enemy_killed.connect(_on_enemy_killed)
+
+func _on_enemy_killed(enemy_id: String, xp: int) -> void:
+    gain_experience(xp, ExperienceSource.COMBAT)
+```
+
+**3. Component-to-Manager:**
+
+```gdscript
+# PlayerController uses InputManager
+func _physics_process(delta: float) -> void:
+    var input_dir = InputManager.get_axis("move_left", "move_right")
+    handle_movement(input_dir, delta)
+```
+
+---
+
+## Cross-System Data Flow
+
+### Item Flow Example
+
+**ItemDatabase → Inventory → Crafting → Building:**
+
+```gdscript
+# 1. ItemDatabase provides item data
+var item_data = ItemDatabase.get_item("iron_ore")
+
+# 2. Inventory stores items
+InventoryManager.add_item("iron_ore", 10)
+
+# 3. Crafting checks inventory
+if InventoryManager.has_item("iron_ore", 5):
+    # Craft item
+    CraftingManager.craft_recipe("iron_bar")
+
+# 4. Building uses crafted items
+BuildingManager.place_building("iron_wall", position)
+```
+
+### Player Data Flow Example
+
+**PlayerController → Survival → Progression:**
+
+```gdscript
+# PlayerController handles input
+func _physics_process(delta: float) -> void:
+    handle_movement(delta)
+    handle_combat(delta)
+
+# SurvivalManager tracks stats
+func _process(delta: float) -> void:
+    update_survival_stats(delta)
+    if current_health <= 0:
+        player_died.emit()
+
+# ProgressionManager tracks XP
+func _on_enemy_killed(enemy_id: String, xp: int) -> void:
+    gain_experience(xp, ExperienceSource.COMBAT)
+```
+
+---
+
+## System Interfaces
+
+### Define Clear Interfaces
+
+**Each system should have a clear API:**
+
+```gdscript
+# InventoryManager Interface
+class_name InventoryManager
+extends Node
+
+# Public API
+func add_item(item_id: String, quantity: int = 1) -> bool
+func remove_item(item_id: String, quantity: int = 1) -> bool
+func has_item(item_id: String) -> bool
+func get_item_count(item_id: String) -> int
+func get_all_items() -> Dictionary
+
+# Signals
+signal item_added(item_id: String, quantity: int)
+signal item_removed(item_id: String, quantity: int)
+signal inventory_full()
+```
+
+### Avoid Circular Dependencies
+
+**Don't create circular references:**
+
+```gdscript
+# Bad - Circular dependency
+# InventoryManager uses CraftingManager
+# CraftingManager uses InventoryManager
+
+# Good - One-way dependency
+# CraftingManager uses InventoryManager
+# InventoryManager doesn't use CraftingManager
+```
+
+---
+
+## Integration Testing
+
+### Test System Integration
+
+**Verify systems work together:**
+
+```gdscript
+func test_crafting_integration() -> void:
+    # Setup
+    InventoryManager.clear()
+    InventoryManager.add_item("iron_ore", 10)
+    
+    # Test
+    var result = CraftingManager.craft_recipe("iron_bar")
+    
+    # Verify
+    assert(result == true, "Should craft successfully")
+    assert(InventoryManager.get_item_count("iron_ore") == 5, "Should consume 5 ore")
+    assert(InventoryManager.get_item_count("iron_bar") == 1, "Should create 1 bar")
+```
+
+### Integration Checklist
+
+**Before marking integration complete:**
+
+- [ ] All systems can communicate
+- [ ] Signals connect correctly
+- [ ] Direct calls work correctly
+- [ ] Data flows correctly between systems
+- [ ] No circular dependencies
+- [ ] Error handling works across systems
+- [ ] Performance is acceptable (60+ FPS)
+
+---
+
+## Common Integration Patterns
+
+### Manager-to-Manager Pattern
+
+```gdscript
+# Manager A uses Manager B
+func do_something() -> void:
+    if ManagerB == null:
+        push_error("ManagerB not available")
+        return
+    
+    var data = ManagerB.get_data()
+    process_data(data)
+```
+
+### Component-to-Manager Pattern
+
+```gdscript
+# Component uses Manager
+func _ready() -> void:
+    if Manager:
+        Manager.signal_name.connect(_on_signal)
+
+func _on_signal() -> void:
+    # Handle signal
+    pass
+```
+
+### Event-Driven Pattern
+
+```gdscript
+# System A emits event
+signal event_occurred(data: Dictionary)
+event_occurred.emit({"key": "value"})
+
+# System B listens
+func _ready() -> void:
+    if SystemA:
+        SystemA.event_occurred.connect(_on_event)
+
+func _on_event(data: Dictionary) -> void:
+    # Handle event
+    process_event(data)
+```
+
+---
+
+## Critical Rules
+
+### DO:
+
+✅ Use signals for events  
+✅ Use direct calls for queries  
+✅ Check dependencies before accessing  
+✅ Document integration points  
+✅ Test system integration  
+✅ Respect initialization order  
+✅ Define clear system interfaces  
+
+### DON'T:
+
+❌ Don't create circular dependencies  
+❌ Don't access systems before initialization  
+❌ Don't use direct calls for events  
+❌ Don't skip dependency checks  
+❌ Don't hide integration points  
+
+---
+
+**See also:**
+- `code-standards.mdc` - Naming conventions and code organization
+- `godot-patterns.mdc` - Godot-specific patterns
+- `implementation-workflow.mdc` - Implementation workflow

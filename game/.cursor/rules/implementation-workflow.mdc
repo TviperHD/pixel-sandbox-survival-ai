@@ -1,0 +1,317 @@
+# Implementation Workflow
+
+**Project:** Pixel Sandbox Survival AI  
+**Engine:** Godot 4.x  
+**Language:** GDScript  
+**Last Updated:** 2025-11-25
+
+---
+
+## Implementation Workflow
+
+**Follow these steps for every system:**
+
+1. **Read the technical specification** for the system you're implementing
+2. **Check the phase checklist** for detailed tasks
+3. **Follow naming conventions** strictly (see `code-standards.mdc`)
+4. **Use Resources** for all data
+5. **Make it configurable** with @export variables
+6. **Handle errors** properly (see `godot-patterns.mdc`)
+7. **Document** your code
+8. **Test** thoroughly
+9. **Check integration** with other systems (see `system-integration.mdc`)
+10. **Verify performance** (60+ FPS)
+
+---
+
+## Reference Documentation
+
+### Technical Specifications
+
+**ALWAYS refer to technical specifications before implementing:**
+
+**Foundation Systems:**
+- Foundation: `../03-planning/technical-specs-foundation.md`
+- Item Database: `../03-planning/technical-specs-item-database.md`
+- Interaction: `../03-planning/technical-specs-interaction.md`
+- Resource Gathering: `../03-planning/technical-specs-resource-gathering.md`
+
+**Core Gameplay:**
+- Survival: `../03-planning/technical-specs-survival.md`
+- Inventory: `../03-planning/technical-specs-inventory.md`
+- Crafting: `../03-planning/technical-specs-crafting.md`
+- Building: `../03-planning/technical-specs-building.md`
+- Combat: `../03-planning/technical-specs-combat.md`
+- Status Effects: `../03-planning/technical-specs-status-effects.md`
+
+**World & Environment:**
+- Pixel Physics: `../03-planning/technical-specs-pixel-physics.md`
+- World Generation: `../03-planning/technical-specs-world-generation.md`
+- Day/Night Cycle: `../03-planning/technical-specs-day-night-cycle.md`
+- Weather: `../03-planning/technical-specs-weather.md`
+
+**AI & Progression:**
+- AI System: `../03-planning/technical-specs-ai-system.md`
+- Progression: `../03-planning/technical-specs-progression.md`
+
+**Content Systems:**
+- NPC: `../03-planning/technical-specs-npc.md`
+- Dialogue: `../03-planning/technical-specs-dialogue.md`
+- Quest: `../03-planning/technical-specs-quest-system.md`
+- Relationship: `../03-planning/technical-specs-relationship.md`
+- Trading/Economy: `../03-planning/technical-specs-trading-economy.md`
+
+**UI/UX Systems:**
+- UI/UX: `../03-planning/technical-specs-ui-ux.md`
+- Minimap: `../03-planning/technical-specs-minimap.md`
+- Item Pickup: `../03-planning/technical-specs-item-pickup.md`
+- Tutorial/Onboarding: `../03-planning/technical-specs-tutorial-onboarding.md`
+
+**Advanced Systems:**
+- Save System: `../03-planning/technical-specs-save-system.md`
+- Audio: `../03-planning/technical-specs-audio.md`
+- Performance/Profiling: `../03-planning/technical-specs-performance-profiling.md`
+- Debug Tools: `../03-planning/technical-specs-debug-tools.md`
+- Accessibility: `../03-planning/technical-specs-accessibility.md`
+- Localization: `../03-planning/technical-specs-localization.md`
+- Modding: `../03-planning/technical-specs-modding.md`
+- Multiplayer: `../03-planning/technical-specs-multiplayer.md`
+
+**Complete Index:** `../03-planning/technical-specs-index.md`
+
+### Implementation Checklists
+
+**Follow phase checklists for detailed tasks:**
+
+- Phase 0: `checklists/phase-0-foundation-setup.md` - Foundation & Setup
+- Phase 1: `checklists/phase-1-foundation-systems.md` - Foundation Systems
+- Phase 2: `checklists/phase-2-core-gameplay.md` - Core Gameplay Systems
+- Phase 3: `checklists/phase-3-world-environment.md` - World & Environment Systems
+- Phase 4: `checklists/phase-4-ai-progression.md` - AI & Progression Systems
+- Phase 5: `checklists/phase-5-content-systems.md` - Content Systems
+- Phase 6: `checklists/phase-6-ui-ux-systems.md` - UI/UX Systems
+- Phase 7: `checklists/phase-7-advanced-systems.md` - Advanced Systems
+- Phase 8: `checklists/phase-8-integration-testing.md` - Integration & Testing
+- Phase 9: `checklists/phase-9-polish-release.md` - Polish & Release
+
+**Navigation:** `checklists/README.md`
+
+### Godot Documentation
+
+**Reference Godot 4 documentation:**
+- [Godot 4 Documentation](https://docs.godotengine.org/en/stable/)
+- [GDScript Style Guide](https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_styleguide.html)
+- [Best Practices](https://docs.godotengine.org/en/stable/tutorials/best_practices/index.html)
+- [Performance Guide](https://docs.godotengine.org/en/stable/tutorials/performance/index.html)
+
+---
+
+## Testing
+
+### Test Checklist
+
+**Before marking a system complete:**
+
+- [ ] All functions tested individually
+- [ ] Integration with other systems tested
+- [ ] Error cases handled
+- [ ] Edge cases tested
+- [ ] Performance verified (60+ FPS)
+- [ ] Code documented
+- [ ] Follows naming conventions
+- [ ] Uses Resources for data
+- [ ] Configurable with @export
+
+### Testing Pattern
+
+```gdscript
+# Test function
+func test_add_item() -> void:
+    # Setup
+    InventoryManager.clear_inventory()
+    
+    # Test
+    var result = InventoryManager.add_item("iron_ore", 10)
+    
+    # Verify
+    assert(result == true, "Should add item successfully")
+    assert(InventoryManager.get_item_count("iron_ore") == 10, "Should have 10 items")
+```
+
+### Integration Testing
+
+**Test system interactions:**
+
+```gdscript
+func test_crafting_integration() -> void:
+    # Setup
+    InventoryManager.add_item("iron_ore", 10)
+    
+    # Test
+    var result = CraftingManager.craft_recipe("iron_bar")
+    
+    # Verify
+    assert(result == true, "Should craft successfully")
+    assert(InventoryManager.get_item_count("iron_bar") == 1, "Should create bar")
+```
+
+---
+
+## Common Patterns
+
+### Manager Singleton Pattern
+
+```gdscript
+extends Node
+
+# Singleton instance (autoload)
+static var instance: InventoryManager
+
+func _ready() -> void:
+    instance = self
+    initialize()
+
+func initialize() -> void:
+    # Initialize system
+    load_all_items()
+    build_indexes()
+```
+
+### Resource Loading Pattern
+
+```gdscript
+func load_all_items() -> void:
+    var dir = DirAccess.open("res://resources/items/")
+    if dir == null:
+        push_error("Failed to open items directory")
+        return
+    
+    dir.list_dir_begin()
+    var file_name = dir.get_next()
+    
+    while file_name != "":
+        if file_name.ends_with(".tres"):
+            var path = "res://resources/items/" + file_name
+            var item = load(path) as ItemData
+            if item:
+                register_item(item)
+        file_name = dir.get_next()
+```
+
+### Signal Connection Pattern
+
+```gdscript
+func _ready() -> void:
+    # Connect signals
+    if SurvivalManager:
+        SurvivalManager.player_died.connect(_on_player_died)
+    
+    if InventoryManager:
+        InventoryManager.item_added.connect(_on_item_added)
+
+func _on_player_died() -> void:
+    # Handle death
+    pass
+
+func _on_item_added(item_id: String, quantity: int) -> void:
+    # Handle item added
+    pass
+```
+
+### Update Loop Pattern
+
+```gdscript
+# For frequent updates
+func _process(delta: float) -> void:
+    update_ui(delta)
+    update_animations(delta)
+
+# For physics updates
+func _physics_process(delta: float) -> void:
+    handle_movement(delta)
+    apply_physics(delta)
+
+# For infrequent updates
+@onready var update_timer: Timer = $UpdateTimer
+
+func _ready() -> void:
+    update_timer.wait_time = 0.1
+    update_timer.timeout.connect(_on_update_timer)
+    update_timer.start()
+
+func _on_update_timer() -> void:
+    update_system()
+```
+
+---
+
+## Critical Rules
+
+### DO:
+
+✅ Always read technical specifications first  
+✅ Always follow naming conventions  
+✅ Always use type hints  
+✅ Always use Resources for data  
+✅ Always make systems modular and configurable  
+✅ Always handle errors  
+✅ Always document code  
+✅ Always test before marking complete  
+✅ Always use @export for configuration  
+✅ Always use signals for events  
+✅ Always check dependencies before accessing  
+✅ Always verify performance (60+ FPS)  
+
+### DON'T:
+
+❌ Don't hardcode values  
+❌ Don't create god objects  
+❌ Don't skip error handling  
+❌ Don't ignore type hints  
+❌ Don't violate naming conventions  
+❌ Don't create circular dependencies  
+❌ Don't skip documentation  
+❌ Don't implement without checking specs  
+❌ Don't skip testing  
+❌ Don't use direct calls for events (use signals)  
+❌ Don't access systems before initialization  
+❌ Don't ignore performance warnings  
+
+---
+
+## Implementation Checklist
+
+**For each system:**
+
+1. [ ] Read technical specification
+2. [ ] Check phase checklist
+3. [ ] Create directory structure
+4. [ ] Create Resource classes (if needed)
+5. [ ] Create Manager class
+6. [ ] Implement core functions
+7. [ ] Add error handling
+8. [ ] Add documentation
+9. [ ] Test functions individually
+10. [ ] Test integration with other systems
+11. [ ] Verify performance
+12. [ ] Update checklist
+
+---
+
+## Remember
+
+**The technical specifications are comprehensive and implementation-ready.** They contain all the information needed to implement each system correctly. Always refer to them before implementing.
+
+**Key Principles:**
+- Modularity: Systems work independently
+- Configurability: Easy to tweak without code changes
+- Documentation: Code is self-documenting
+- Testing: Everything is tested
+- Performance: 60+ FPS target
+
+---
+
+**See also:**
+- `code-standards.mdc` - Naming conventions and code organization
+- `godot-patterns.mdc` - Godot-specific patterns and best practices
+- `system-integration.mdc` - How systems communicate

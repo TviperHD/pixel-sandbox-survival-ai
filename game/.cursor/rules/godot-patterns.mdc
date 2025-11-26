@@ -1,0 +1,471 @@
+# Godot 4 Patterns & Best Practices
+
+**Project:** Pixel Sandbox Survival AI  
+**Engine:** Godot 4.x  
+**Language:** GDScript  
+**Last Updated:** 2025-11-25
+
+---
+
+## Autoload Singletons
+
+### Initialization Order
+
+**Order matters!** Initialize in this order:
+1. GameManager
+2. InputManager
+3. SettingsManager
+4. PauseManager
+5. ReferenceManager
+6. Other managers (ItemDatabase, InventoryManager, etc.)
+
+### Pattern
+
+```gdscript
+# scripts/managers/GameManager.gd
+extends Node
+
+func _ready() -> void:
+    # Initialize after all autoloads are ready
+    # Dependencies are guaranteed to exist
+    pass
+```
+
+### Best Practices
+
+- Set up autoloads in Project Settings > Autoload
+- Use autoloads for global managers
+- Don't create circular dependencies
+- Initialize dependencies in `_ready()`, not `_init()`
+
+---
+
+## Signals vs Direct Calls
+
+### Use Signals for Events
+
+**Events are one-way notifications:**
+
+```gdscript
+# Define signal
+signal item_added(item_id: String, quantity: int)
+signal player_died()
+signal level_up(new_level: int)
+
+# Emit signal
+item_added.emit("iron_ore", 10)
+player_died.emit()
+level_up.emit(5)
+```
+
+**When to use signals:**
+- One-way notifications
+- Decoupled communication
+- Multiple listeners
+- UI updates
+- System events
+
+### Use Direct Calls for Queries
+
+**Queries return values:**
+
+```gdscript
+# Query functions
+func get_item_count(item_id: String) -> int:
+    return inventory.get(item_id, 0)
+
+func has_item(item_id: String) -> bool:
+    return item_id in inventory
+
+func get_player_position() -> Vector2:
+    return player.global_position
+```
+
+**When to use direct calls:**
+- Need return value
+- Synchronous operations
+- Simple queries
+- Performance-critical code
+
+### Hybrid Pattern
+
+**Combine both approaches:**
+
+```gdscript
+# Event - Signal (decoupled)
+signal item_added(item_id: String)
+item_added.emit("iron_ore")
+
+# Query - Direct call (simple, efficient)
+var count = InventoryManager.get_item_count("iron_ore")
+```
+
+---
+
+## Performance Optimization
+
+### Target: 60+ FPS
+
+### Object Pooling
+
+**For frequently created/destroyed objects:**
+
+```gdscript
+var projectile_pool: Array[Projectile] = []
+
+func get_projectile() -> Projectile:
+    if projectile_pool.is_empty():
+        return Projectile.new()
+    return projectile_pool.pop_back()
+
+func return_projectile(projectile: Projectile) -> void:
+    projectile.reset()
+    projectile_pool.append(projectile)
+```
+
+### Physics Bodies
+
+**Limit physics bodies:**
+- Only use CharacterBody2D where needed
+- Use Area2D for detection (no physics simulation)
+- Use StaticBody2D for static objects
+- Use RigidBody2D only when needed
+
+### Collision Optimization
+
+**Efficient collision:**
+- Use appropriate collision layers/masks
+- Don't check collisions every frame if not needed
+- Use Area2D for detection zones
+- Use raycasts for line-of-sight checks
+
+### Update Frequency
+
+**Choose the right update method:**
+
+```gdscript
+# _process() - Every frame, UI/visual updates
+func _process(delta: float) -> void:
+    update_ui()
+    update_animations()
+
+# _physics_process() - Physics frame, movement/physics
+func _physics_process(delta: float) -> void:
+    handle_movement(delta)
+    apply_physics()
+
+# Timer - Infrequent updates
+@onready var update_timer: Timer = $UpdateTimer
+func _ready() -> void:
+    update_timer.timeout.connect(_on_update_timer)
+    update_timer.wait_time = 0.1  # Update every 0.1 seconds
+```
+
+### Performance Tips
+
+1. **Cache expensive calculations:**
+   ```gdscript
+   var cached_distance: float = 0.0
+   var last_calc_time: float = 0.0
+   
+   func get_distance() -> float:
+       var current_time = Time.get_ticks_msec()
+       if current_time - last_calc_time > 100:  # Cache for 100ms
+           cached_distance = calculate_expensive_distance()
+           last_calc_time = current_time
+       return cached_distance
+   ```
+
+2. **Use object pooling for projectiles/particles**
+3. **Limit particle counts**
+4. **Use texture atlases**
+5. **Batch draw calls when possible**
+6. **Profile regularly with Godot profiler**
+
+---
+
+## Error Handling
+
+### Always Handle Errors
+
+```gdscript
+func get_item(item_id: String) -> ItemData:
+    if not item_id in items:
+        push_error("Item '%s' not found" % item_id)
+        return null
+    return items[item_id]
+
+func load_resource(path: String) -> Resource:
+    if not ResourceLoader.exists(path):
+        push_error("Resource not found: %s" % path)
+        return null
+    
+    var resource = load(path)
+    if resource == null:
+        push_error("Failed to load resource: %s" % path)
+        return null
+    
+    return resource
+```
+
+### Error Functions
+
+**Use appropriate error functions:**
+
+- `push_error()` - Critical errors that need attention
+- `push_warning()` - Non-critical issues, potential problems
+- `print()` - Debug information (remove in release)
+
+### Best Practices
+
+- Return early on errors (fail fast)
+- Provide fallback values where appropriate
+- Validate inputs before operations
+- Check for null references
+- Log errors for debugging
+
+### Example: Robust Function
+
+```gdscript
+func craft_item(recipe_id: String, quantity: int = 1) -> bool:
+    # Validate inputs
+    if recipe_id.is_empty():
+        push_error("Recipe ID cannot be empty")
+        return false
+    
+    if quantity <= 0:
+        push_error("Quantity must be positive")
+        return false
+    
+    # Check dependencies
+    if not ItemDatabase.has_item(recipe_id):
+        push_error("Recipe not found: %s" % recipe_id)
+        return false
+    
+    if InventoryManager == null:
+        push_error("InventoryManager not available")
+        return false
+    
+    # Perform operation
+    var recipe = ItemDatabase.get_recipe(recipe_id)
+    if not InventoryManager.has_ingredients(recipe.ingredients):
+        push_warning("Insufficient ingredients for recipe: %s" % recipe_id)
+        return false
+    
+    # Success
+    return true
+```
+
+---
+
+## Resource Management
+
+### Loading Resources
+
+**Use ResourceLoader for resources:**
+
+```gdscript
+# Load resource
+var item = load("res://resources/items/iron_ore.tres") as ItemData
+
+# Check if exists first
+if ResourceLoader.exists(path):
+    var resource = load(path)
+```
+
+### Resource Instances
+
+**Create instances with duplicate():**
+
+```gdscript
+# Get base resource
+var base_item = ItemDatabase.get_item("iron_ore")
+
+# Create instance (deep copy)
+var item_instance = base_item.duplicate(true)
+
+# Modify instance
+item_instance.current_durability = 50
+```
+
+### Resource Paths
+
+**Use consistent path patterns:**
+
+```gdscript
+# Items
+const ITEMS_PATH = "res://resources/items/"
+
+# Recipes
+const RECIPES_PATH = "res://resources/recipes/"
+
+# Load with path
+var item = load(ITEMS_PATH + item_id + ".tres")
+```
+
+---
+
+## Scene Management
+
+### Loading Scenes
+
+```gdscript
+# Load scene
+var scene = load("res://scenes/player/Player.tscn") as PackedScene
+var player = scene.instantiate()
+
+# Add to scene tree
+add_child(player)
+
+# Or use scene changer
+get_tree().change_scene_to_file("res://scenes/main/Main.tscn")
+```
+
+### Scene References
+
+**Use @onready for node references:**
+
+```gdscript
+@onready var player: CharacterBody2D = $Player
+@onready var camera: Camera2D = $Camera2D
+@onready var ui: Control = $UI
+```
+
+**Or get_node() if needed:**
+
+```gdscript
+var player = get_node("Player") as CharacterBody2D
+```
+
+---
+
+## Signal Connections
+
+### Connection Patterns
+
+**Connect in _ready():**
+
+```gdscript
+func _ready() -> void:
+    # Direct connection
+    if SurvivalManager:
+        SurvivalManager.player_died.connect(_on_player_died)
+    
+    # With callable
+    if SurvivalManager:
+        SurvivalManager.player_died.connect(_on_player_died.bind())
+    
+    # With parameters
+    if InventoryManager:
+        InventoryManager.item_added.connect(_on_item_added)
+```
+
+**Handler functions:**
+
+```gdscript
+func _on_player_died() -> void:
+    # Handle death
+    pass
+
+func _on_item_added(item_id: String, quantity: int) -> void:
+    # Handle item added
+    pass
+```
+
+### Disconnect Signals
+
+**Always disconnect when done:**
+
+```gdscript
+func _exit_tree() -> void:
+    if SurvivalManager:
+        SurvivalManager.player_died.disconnect(_on_player_died)
+```
+
+---
+
+## Common Patterns
+
+### Manager Singleton Pattern
+
+```gdscript
+extends Node
+
+# Singleton instance (autoload)
+static var instance: InventoryManager
+
+func _ready() -> void:
+    instance = self
+    initialize()
+
+func initialize() -> void:
+    # Initialize system
+    pass
+```
+
+### Resource Loading Pattern
+
+```gdscript
+func load_all_items() -> void:
+    var dir = DirAccess.open("res://resources/items/")
+    if dir == null:
+        push_error("Failed to open items directory")
+        return
+    
+    dir.list_dir_begin()
+    var file_name = dir.get_next()
+    
+    while file_name != "":
+        if file_name.ends_with(".tres"):
+            var path = "res://resources/items/" + file_name
+            var item = load(path) as ItemData
+            if item:
+                register_item(item)
+        file_name = dir.get_next()
+```
+
+### Timer Pattern
+
+```gdscript
+@onready var update_timer: Timer = $UpdateTimer
+
+func _ready() -> void:
+    update_timer.wait_time = 0.1
+    update_timer.timeout.connect(_on_timer_timeout)
+    update_timer.start()
+
+func _on_timer_timeout() -> void:
+    # Periodic update
+    update_system()
+```
+
+---
+
+## Critical Rules
+
+### DO:
+
+✅ Use signals for events  
+✅ Use direct calls for queries  
+✅ Handle errors properly  
+✅ Use object pooling for frequent objects  
+✅ Optimize for 60+ FPS  
+✅ Use appropriate update methods  
+✅ Connect signals in _ready()  
+✅ Disconnect signals when done  
+
+### DON'T:
+
+❌ Don't use direct calls for events  
+❌ Don't skip error handling  
+❌ Don't create objects every frame  
+❌ Don't use _process() for physics  
+❌ Don't forget to disconnect signals  
+❌ Don't ignore performance warnings  
+
+---
+
+**See also:**
+- `code-standards.mdc` - Naming conventions and code organization
+- `system-integration.mdc` - How systems communicate
+- `implementation-workflow.mdc` - Implementation workflow
