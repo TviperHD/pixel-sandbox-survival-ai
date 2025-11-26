@@ -74,10 +74,13 @@ git commit -m "Your commit message"
 git push
 ```
 
-**Or use the helper script:**
+**Or use the helper scripts:**
 ```powershell
-# From game/ folder
+# From game/ folder - Regular commit
 .\auto-commit.ps1 "Your commit message"
+
+# From game/ folder - Create phase milestone
+.\create-phase-milestone.ps1 1 "Foundation Systems Complete"
 ```
 
 ---

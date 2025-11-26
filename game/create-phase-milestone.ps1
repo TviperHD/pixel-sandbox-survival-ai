@@ -9,6 +9,10 @@ param(
     [string]$Description
 )
 
+# Navigate to project root (from game/ folder)
+$projectRoot = Split-Path -Parent $PSScriptRoot
+Set-Location $projectRoot
+
 Write-Host "=== Create Phase Milestone ===" -ForegroundColor Cyan
 Write-Host ""
 
