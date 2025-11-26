@@ -87,6 +87,18 @@ Covers:
 
 **Note:** This rule file is for research/planning sessions, not implementation sessions.
 
+### `rules/git-auto-commit.mdc`
+
+Covers:
+- **Automatic Commits:** Always commit changes after making them
+- **Commit Process:** Step-by-step Git commands
+- **Commit Messages:** Format guidelines and examples
+- **Phase Milestones:** Creating tags for completed phases
+- **Implementation Pattern:** When and how to commit
+- **Troubleshooting:** Common issues and solutions
+
+**CRITICAL:** This rule ensures all changes are automatically backed up to GitHub.
+
 ---
 
 ## How Cursor Uses These Rules
@@ -121,6 +133,7 @@ When updating rules:
 - Edit `godot-patterns.mdc` for Godot-specific patterns
 - Edit `system-integration.mdc` for system communication patterns
 - Edit `implementation-workflow.mdc` for workflow and references
+- Edit `git-auto-commit.mdc` for Git commit workflow
 
 ---
 

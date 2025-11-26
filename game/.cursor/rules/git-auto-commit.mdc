@@ -1,0 +1,175 @@
+# Automatic Git Commits
+
+**Project:** Pixel Sandbox Survival AI  
+**Last Updated:** 2025-01-27
+
+---
+
+## CRITICAL RULE: Always Commit Changes
+
+**After making ANY changes to the codebase, you MUST automatically commit them to Git.**
+
+### When to Commit
+
+Commit changes automatically:
+- ✅ After implementing a feature or system
+- ✅ After fixing a bug
+- ✅ After updating documentation
+- ✅ After completing a checklist item
+- ✅ After making any code changes
+- ✅ At the end of a work session
+- ✅ Before making major changes
+
+### Commit Process
+
+**After making changes, ALWAYS run these commands:**
+
+```bash
+# Navigate to project root (from game/ folder)
+cd ..
+
+# Add all changes
+git add .
+
+# Commit with descriptive message
+git commit -m "Brief description of what was changed"
+
+# Push to GitHub
+git push
+```
+
+### Commit Message Format
+
+**Use clear, descriptive messages:**
+
+**Good examples:**
+- `"Add player movement controller"`
+- `"Implement inventory item stacking logic"`
+- `"Survival: Add hunger/thirst decay system"`
+- `"Fix bug in crafting recipe validation"`
+- `"Update technical spec for combat system"`
+- `"Phase 1: Complete foundation systems"`
+
+**Bad examples:**
+- `"update"` ❌
+- `"fix"` ❌
+- `"changes"` ❌
+- `"stuff"` ❌
+
+**Format guidelines:**
+- Use present tense ("Add" not "Added")
+- Be specific about what changed
+- Include system name if relevant
+- Keep it concise (one line preferred)
+
+### Phase Milestones
+
+**When completing a phase, create a milestone tag:**
+
+```bash
+# After completing Phase 1
+git tag -a phase-1 -m "Phase 1: Foundation Systems Complete"
+git push origin phase-1
+
+# After completing Phase 2
+git tag -a phase-2 -m "Phase 2: Core Gameplay Systems Complete"
+git push origin phase-2
+
+# And so on for each phase...
+```
+
+**Available phases:**
+- phase-0: Foundation Setup
+- phase-1: Foundation Systems
+- phase-2: Core Gameplay Systems
+- phase-3: World & Environment Systems
+- phase-4: AI & Progression Systems
+- phase-5: Content Systems
+- phase-6: UI/UX Systems
+- phase-7: Advanced Systems
+- phase-8: Integration & Testing
+- phase-9: Polish & Release
+
+### Implementation Pattern
+
+**Every time you make changes:**
+
+1. **Make the changes** (edit files, create files, etc.)
+2. **Immediately commit:**
+   ```bash
+   cd ..
+   git add .
+   git commit -m "Description of changes"
+   git push
+   ```
+3. **Continue working** or move to next task
+
+**DO NOT:**
+- ❌ Leave changes uncommitted
+- ❌ Wait to commit until later
+- ❌ Skip commits
+- ❌ Commit without pushing
+
+### Example Workflow
+
+**Scenario: Implementing inventory system**
+
+```bash
+# 1. Create inventory_manager.gd
+# 2. Implement functions
+# 3. Test it works
+# 4. IMMEDIATELY commit:
+cd ..
+git add .
+git commit -m "Implement inventory manager with add/remove item functions"
+git push
+
+# 5. Continue with next feature...
+```
+
+### Helper Script
+
+**You can use the helper script from game/ folder:**
+
+```powershell
+# From game/ folder
+cd ..
+.\game\auto-commit.ps1 "Description of changes"
+```
+
+**But manual commits are preferred for better control over commit messages.**
+
+---
+
+## Important Notes
+
+- **Commits happen automatically** - Don't skip this step
+- **All changes are backed up** - Nothing gets lost
+- **Commit history** - Full record of all work
+- **Phase milestones** - Easy to track progress
+
+---
+
+## Troubleshooting
+
+**If commit fails:**
+- Check you're in project root: `cd ..` from game/ folder
+- Verify Git is configured: `git config user.name` and `git config user.email`
+- Check GitHub connection: `git remote -v`
+
+**If push fails:**
+- Check internet connection
+- Verify GitHub credentials
+- Check if repository exists on GitHub
+
+---
+
+## Remember
+
+**This is a CRITICAL rule - always commit changes automatically after making them. Never leave work uncommitted!**
+
+---
+
+**See also:**
+- `GIT_AUTO_COMMIT.md` - Detailed Git workflow documentation
+- `implementation-workflow.mdc` - Implementation workflow (includes Git commits)

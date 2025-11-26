@@ -279,6 +279,40 @@ func _on_update_timer() -> void:
 
 ---
 
+## Automatic Git Commits
+
+**CRITICAL: After making ANY changes, automatically commit them:**
+
+1. **After completing a task or making changes:**
+   ```bash
+   git add .
+   git commit -m "Brief description of changes made"
+   git push
+   ```
+
+2. **Commit message format:**
+   - Use present tense: "Add player movement controller"
+   - Be specific: "Implement inventory item stacking logic"
+   - Include system name: "Survival: Add hunger/thirst decay system"
+   - For phase completion: "Phase 1: Complete foundation systems"
+
+3. **When to commit:**
+   - After implementing a feature
+   - After fixing a bug
+   - After updating documentation
+   - After completing a checklist item
+   - At the end of a work session
+   - Before making major changes
+
+4. **Phase milestones:**
+   - When completing a phase, create a milestone tag:
+   ```bash
+   git tag -a phase-X -m "Phase X: Description Complete"
+   git push origin phase-X
+   ```
+
+**ALWAYS commit changes automatically - don't leave uncommitted work!**
+
 ## Implementation Checklist
 
 **For each system:**
@@ -295,6 +329,7 @@ func _on_update_timer() -> void:
 10. [ ] Test integration with other systems
 11. [ ] Verify performance
 12. [ ] Update checklist
+13. [ ] **Commit changes to Git automatically**
 
 ---
 
@@ -315,3 +350,4 @@ func _on_update_timer() -> void:
 - `code-standards.mdc` - Naming conventions and code organization
 - `godot-patterns.mdc` - Godot-specific patterns and best practices
 - `system-integration.mdc` - How systems communicate
+- `GIT_AUTO_COMMIT.md` - Automatic Git commit workflow
