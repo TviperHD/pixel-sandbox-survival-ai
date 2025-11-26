@@ -47,7 +47,7 @@ This is a complex game project with **33 fully-specified systems** ready for imp
 - ✅ Test before marking complete
 - ✅ Use signals for events, direct calls for queries
 - ✅ Target 60+ FPS performance
-- ✅ **Automatically commit changes to Git after making them** (see `GIT_AUTO_COMMIT.md`)
+- ✅ **Automatically commit changes to Git after making them** (see `.cursor/rules/git-auto-commit.mdc`)
 
 **NEVER:**
 - ❌ Hardcode values
@@ -74,7 +74,7 @@ For each system you implement:
 8. **Document** code (class and function docs)
 9. **Test** thoroughly (individual + integration)
 10. **Verify** performance (60+ FPS target)
-11. **Commit changes** automatically to Git (see `GIT_AUTO_COMMIT.md`)
+11. **Commit changes** automatically to Git (see `.cursor/rules/git-auto-commit.mdc`)
 
 ### Project Structure
 

@@ -180,17 +180,7 @@ git push
 
 **Remember: Commit frequency is better than committing rarely. Commit after EVERY change.**
 
-### Helper Script
-
-**You can use the helper script from game/ folder:**
-
-```powershell
-# From game/ folder
-cd ..
-.\game\auto-commit.ps1 "Description of changes"
-```
-
-**But manual commits are preferred for better control over commit messages.**
+**Note:** Manual commits are required for better control over commit messages. Do not use helper scripts.
 
 ---
 
@@ -237,5 +227,4 @@ cd ..
 ---
 
 **See also:**
-- `GIT_AUTO_COMMIT.md` - Detailed Git workflow documentation
 - `implementation-workflow.mdc` - Implementation workflow (includes Git commits)
