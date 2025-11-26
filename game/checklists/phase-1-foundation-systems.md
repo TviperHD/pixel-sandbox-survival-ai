@@ -228,7 +228,7 @@ This phase implements the core foundation systems: project structure, player con
 - [ ] Test remapping works
 - [ ] Test remaps persist
 
-#### Runtime Remapping
+#### Runtime Remapping (Optional for Phase 1)
 - [ ] Implement `start_remap(action: String)` function:
   - [ ] Set remap state
   - [ ] Wait for input
@@ -238,6 +238,7 @@ This phase implements the core foundation systems: project structure, player con
   - [ ] Listen for any input
   - [ ] Apply remap when input detected
 - [ ] Test runtime remapping UI (basic)
+- [ ] **Note:** Full remapping UI can be implemented in Phase 6 (UI/UX Systems)
 
 #### Controller Support
 - [ ] Test keyboard input works
@@ -307,10 +308,12 @@ This phase implements the core foundation systems: project structure, player con
 - [ ] Test limits prevent camera going out of bounds
 
 #### Auto-Target Setup
-- [ ] Implement automatic target detection:
-  - [ ] If target not set, use parent as target
-  - [ ] Or find player in scene tree
+- [ ] Implement automatic target detection in `_ready()`:
+  - [ ] If target not set, use parent as target (if parent is Node2D)
+  - [ ] Or get player from ReferenceManager if available
+  - [ ] Register camera with ReferenceManager
 - [ ] Test auto-target works
+- [ ] Test camera follows player correctly
 
 #### Integration
 - [ ] Add CameraController to Player scene
@@ -337,16 +340,14 @@ This phase implements the core foundation systems: project structure, player con
       PAUSED,
       INVENTORY,
       CRAFTING,
-      BUILDING,
-      DIALOGUE,
-      DEAD
+      BUILDING
   }
   ```
 - [ ] Add `current_state: GameState = GameState.MENU`
-- [ ] Implement `change_state(new_state: GameState)` function:
-  - [ ] Emit state_changed signal
+- [ ] Implement `set_game_state(new_state: GameState)` function:
+  - [ ] Emit game_state_changed signal
   - [ ] Update current_state
-  - [ ] Handle state-specific logic
+  - [ ] Handle state-specific logic (pause/unpause based on state)
 - [ ] Test state transitions
 
 #### Scene Management
@@ -393,6 +394,17 @@ This phase implements the core foundation systems: project structure, player con
 - [ ] Implement `get_setting(key: String, default)` function
 - [ ] Implement `set_setting(key: String, value)` function
 - [ ] Test settings persistence
+
+#### Autoload Setup
+- [ ] Set up autoload singletons in Project Settings > Autoload:
+  - [ ] Add `scripts/managers/GameManager.gd` as `GameManager` (order: 1)
+  - [ ] Add `scripts/managers/InputManager.gd` as `InputManager` (order: 2)
+  - [ ] Add `scripts/managers/SettingsManager.gd` as `SettingsManager` (order: 3)
+  - [ ] Add `scripts/managers/PauseManager.gd` as `PauseManager` (order: 4)
+  - [ ] Add `scripts/managers/ReferenceManager.gd` as `ReferenceManager` (order: 5)
+  - [ ] Add `scripts/managers/ItemDatabase.gd` as `ItemDatabase` (order: 6)
+- [ ] Verify autoload order is correct
+- [ ] Test all managers initialize correctly
 
 #### Manager Communication
 - [ ] Set up signal connections between managers
@@ -449,17 +461,36 @@ This phase implements the core foundation systems: project structure, player con
 - [ ] Test resource creation in editor
 
 ### Core Functions - Loading
+- [ ] Implement `load_config()` function:
+  - [ ] Load CommonItemsConfig from `res://resources/config/common_items_config.tres`
+  - [ ] Create default config if file doesn't exist
+  - [ ] Set default eager_load_types and lazy_load_types
 - [ ] Implement `load_all_items()` function:
+  - [ ] Call `load_config()` first
   - [ ] Scan `resources/items/` directory
   - [ ] Load all .tres files
-  - [ ] Register each item
-  - [ ] Build indexes
-- [ ] Implement `register_item(item_data: ItemData)` function:
+  - [ ] Determine eager vs lazy loading based on config
+  - [ ] Register eager items immediately
+  - [ ] Add lazy items to pending_lazy_items list
+  - [ ] Preload icons for eager items
+  - [ ] Build search indexes
+  - [ ] Emit item_database_loaded signal
+- [ ] Implement `register_item(item_data: ItemData, eager: bool = false)` function:
   - [ ] Validate item_data
+  - [ ] Check for duplicate item_ids
   - [ ] Add to items dictionary
   - [ ] Add to type/category indexes
+  - [ ] Update search indexes (name_index, tag_index)
+  - [ ] Invalidate search cache
   - [ ] Emit item_registered signal
-- [ ] Test item loading
+- [ ] Implement `load_item_lazy(item_id: String)` function:
+  - [ ] Check if already loaded
+  - [ ] Load from pending_lazy_items
+  - [ ] Register item
+  - [ ] Load icon
+  - [ ] Update indexes
+  - [ ] Emit item_lazy_loaded signal
+- [ ] Test item loading (eager and lazy)
 
 ### Core Functions - Lookup
 - [ ] Implement `get_item(item_id: String) -> ItemData`:
@@ -472,15 +503,31 @@ This phase implements the core foundation systems: project structure, player con
 - [ ] Test all lookup functions
 
 ### Core Functions - Queries
-- [ ] Implement `get_all_items() -> Array[ItemData]`
-- [ ] Implement `get_items_by_type(type: ItemType) -> Array[ItemData]`
-- [ ] Implement `get_items_by_category(category: String) -> Array[ItemData]`
+- [ ] Implement `get_all_items() -> Array[ItemData]`:
+  - [ ] Return all loaded items (not pending lazy items)
+- [ ] Implement `get_items_by_type(item_type: ItemType) -> Array[ItemData]`:
+  - [ ] Use items_by_type index for performance
+  - [ ] Return copy of array
+- [ ] Implement `get_items_by_category(category: String) -> Array[ItemData]`:
+  - [ ] Use items_by_category index for performance
+  - [ ] Return copy of array
 - [ ] Implement `search_items(query: String) -> Array[ItemData]`:
-  - [ ] Search name, description, tags
-  - [ ] Use indexes for performance
-- [ ] Implement `filter_items(filters: Dictionary) -> Array[ItemData]`
-- [ ] Implement `get_items_with_tag(tag: String) -> Array[ItemData]`
+  - [ ] Check search_cache first
+  - [ ] Search name_index (fast)
+  - [ ] Search tag_index (fast)
+  - [ ] Search descriptions (slower, but comprehensive)
+  - [ ] Cache result (limit cache size to 100)
+  - [ ] Return results
+- [ ] Implement `filter_items(filters: Dictionary) -> Array[ItemData]`:
+  - [ ] Use type index if filtering by type (performance optimization)
+  - [ ] Filter by category, tags, stackable, min/max value
+  - [ ] Return matching items
+- [ ] Implement `get_items_with_tag(tag: String) -> Array[ItemData]`:
+  - [ ] Use tag_index for performance
+  - [ ] Return copy of array
 - [ ] Test all query functions
+- [ ] Test search cache works correctly
+- [ ] Test indexes improve performance
 
 ### Core Functions - Instance Creation
 - [ ] Implement `create_item_instance(item_id: String) -> ItemData`:
@@ -494,9 +541,19 @@ This phase implements the core foundation systems: project structure, player con
 - [ ] Test instance creation
 
 ### Core Functions - Validation
-- [ ] Implement `validate_item(item_id: String) -> bool`
-- [ ] Implement `validate_item_data(item_data: ItemData) -> bool`
+- [ ] Implement `validate_item(item_id: String) -> bool`:
+  - [ ] Check if item exists in items dictionary OR pending_lazy_items
+  - [ ] Return true if exists
+- [ ] Implement `validate_item_data(item_data: ItemData) -> bool`:
+  - [ ] Strict validation: Check required fields (item_id, item_name not empty)
+  - [ ] Lenient validation: Use defaults for optional fields (description, icon)
+  - [ ] Validate stackable consistency (is_stackable matches max_stack_size)
+  - [ ] Initialize durability if needed
+  - [ ] Return true if valid, false if critical errors
+  - [ ] Log warnings for optional field issues
 - [ ] Test validation
+- [ ] Test validation handles missing required fields
+- [ ] Test validation uses defaults for optional fields
 
 ### Indexing System
 - [ ] Build items_by_type index
@@ -512,23 +569,47 @@ This phase implements the core foundation systems: project structure, player con
 - [ ] Test initialization order
 
 ### Test Items Creation
-- [ ] Create test item resources:
-  - [ ] Test material item
-  - [ ] Test tool item
-  - [ ] Test weapon item
-  - [ ] Test consumable item
+- [ ] Create `resources/config/` directory
+- [ ] Create CommonItemsConfig resource (optional - defaults will be used if missing):
+  - [ ] Set eager_load_types: MATERIAL, WEAPON, CONSUMABLE
+  - [ ] Set lazy_load_types: QUEST_ITEM, OTHER
+  - [ ] Save as `common_items_config.tres`
+- [ ] Create test item resources (minimum 4 items):
+  - [ ] Test material item (e.g., `iron_ore.tres`)
+  - [ ] Test tool item (e.g., `wooden_pickaxe.tres`)
+  - [ ] Test weapon item (e.g., `wooden_sword.tres`)
+  - [ ] Test consumable item (e.g., `bread.tres`)
+- [ ] Assign icons to test items (create placeholder icons if needed)
 - [ ] Test items load correctly
 - [ ] Test item queries work
+- [ ] Test eager vs lazy loading works correctly
 
 ---
 
 ## Integration Testing
 
 ### System Integration
-- [ ] Test PlayerController + InputManager integration
-- [ ] Test PlayerController + CameraController integration
-- [ ] Test GameManager + all managers integration
-- [ ] Test ItemDatabase + InventoryManager (when created)
+- [ ] Test PlayerController + InputManager integration:
+  - [ ] PlayerController uses InputManager for all input
+  - [ ] Input remapping affects player controls
+- [ ] Test PlayerController + CameraController integration:
+  - [ ] Camera follows player correctly
+  - [ ] Camera deadzone works
+  - [ ] Camera zoom works
+- [ ] Test PlayerController + ReferenceManager integration:
+  - [ ] Player registers with ReferenceManager
+  - [ ] Other systems can get player via ReferenceManager
+- [ ] Test GameManager + all managers integration:
+  - [ ] GameManager state changes affect PauseManager
+  - [ ] SettingsManager loads/saves correctly
+  - [ ] All managers initialize in correct order
+- [ ] Test ItemDatabase initialization:
+  - [ ] ItemDatabase loads before systems that use it
+  - [ ] Systems can wait for item_database_loaded signal
+  - [ ] ItemDatabase provides items correctly
+- [ ] Test ItemDatabase + future systems (when created):
+  - [ ] InventoryManager can use ItemDatabase (Phase 2)
+  - [ ] CraftingManager can use ItemDatabase (Phase 2)
 - [ ] Test all systems work together
 
 ### Performance Testing
