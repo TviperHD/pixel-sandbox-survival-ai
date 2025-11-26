@@ -27,12 +27,13 @@ This phase implements the core foundation systems: project structure, player con
   - [ ] UPPER_SNAKE_CASE for constants
   - [ ] Document conventions in code comments
 
-#### Base Scene Templates
+#### Base Scene Templates (Optional)
 - [ ] Create `scenes/templates/` folder
-- [ ] Create base entity template scene
-- [ ] Create base UI template scene
-- [ ] Create base manager template script
+- [ ] Create base entity template scene (for future use)
+- [ ] Create base UI template scene (for future use)
+- [ ] Create base manager template script (for reference)
 - [ ] Document template usage
+- [ ] **Note:** Templates are optional for Phase 1, can be created later if needed
 
 ---
 
@@ -74,11 +75,12 @@ This phase implements the core foundation systems: project structure, player con
 
 #### Core Functions - Input Handling
 - [ ] Implement `handle_input()` function:
-  - [ ] Get input direction from InputManager
-  - [ ] Check for run input
-  - [ ] Check for jump input (with buffering)
-  - [ ] Check for other actions (dig, attack, etc.)
+  - [ ] Get input direction using `InputManager.get_axis("move_left", "move_right")`
+  - [ ] Check for run input using `InputManager.is_action_pressed("run")`
+  - [ ] Check for jump input using `InputManager.is_action_just_pressed("jump")` (with buffering)
+  - [ ] Check for other actions (dig, attack, etc.) using InputManager
 - [ ] Test input detection
+- [ ] Test InputManager integration works correctly
 
 #### Core Functions - Gravity
 - [ ] Implement `apply_gravity(delta: float)` function:
@@ -247,9 +249,13 @@ This phase implements the core foundation systems: project structure, player con
 - [ ] Test mixed input (keyboard + controller)
 
 #### Integration
-- [ ] Connect InputManager to PlayerController
-- [ ] Test PlayerController uses InputManager
+- [ ] Connect InputManager to PlayerController:
+  - [ ] Use `InputManager.get_axis()` for movement
+  - [ ] Use `InputManager.is_action_pressed()` for actions
+  - [ ] Use `InputManager.is_action_just_pressed()` for one-time actions
+- [ ] Test PlayerController uses InputManager correctly
 - [ ] Test all actions work in game
+- [ ] Test input remapping persists (if implemented)
 
 ---
 
@@ -360,11 +366,27 @@ This phase implements the core foundation systems: project structure, player con
 
 #### ReferenceManager Creation
 - [ ] Create `scripts/managers/ReferenceManager.gd`
-- [ ] Set up as autoload singleton
-- [ ] Add `references: Dictionary = {}`
-- [ ] Implement `register_reference(key: String, node: Node)` function
-- [ ] Implement `get_reference(key: String) -> Node` function
-- [ ] Implement `unregister_reference(key: String)` function
+- [ ] Set up as autoload singleton (order: 5)
+- [ ] Add reference variables:
+  - [ ] `var player: PlayerController = null`
+  - [ ] `var world: Node2D = null`
+  - [ ] `var ui: Control = null`
+  - [ ] `var camera: CameraController = null`
+  - [ ] `var hud: Control = null`
+- [ ] Implement registration functions:
+  - [ ] `register_player(player_node: PlayerController)` function
+  - [ ] `register_world(world_node: Node2D)` function
+  - [ ] `register_ui(ui_node: Control)` function
+  - [ ] `register_camera(camera_node: CameraController)` function
+  - [ ] `register_hud(hud_node: Control)` function
+- [ ] Implement getter functions:
+  - [ ] `get_player() -> PlayerController`
+  - [ ] `get_world() -> Node2D`
+  - [ ] `get_ui() -> Control`
+  - [ ] `get_camera() -> CameraController`
+  - [ ] `get_hud() -> Control`
+- [ ] Implement `clear_references()` function
+- [ ] Add signals: `player_registered`, `world_registered`, `camera_registered`
 - [ ] Test reference management
 
 #### PauseManager Creation
@@ -494,13 +516,18 @@ This phase implements the core foundation systems: project structure, player con
 
 ### Core Functions - Lookup
 - [ ] Implement `get_item(item_id: String) -> ItemData`:
-  - [ ] Return item from dictionary
-  - [ ] Error if not found
-- [ ] Implement `get_item_safe(item_id: String) -> ItemData`:
+  - [ ] Check if item already loaded in items dictionary
+  - [ ] If not found, try lazy loading via `load_item_lazy()`
   - [ ] Return item or null
-  - [ ] No error if not found
-- [ ] Implement `has_item(item_id: String) -> bool`
+  - [ ] Error if not found after lazy load attempt
+- [ ] Implement `get_item_safe(item_id: String) -> ItemData`:
+  - [ ] Return item or null (no error)
+  - [ ] Try lazy loading if not found
+- [ ] Implement `has_item(item_id: String) -> bool`:
+  - [ ] Check items dictionary OR pending_lazy_items
+  - [ ] Return true if item exists (loaded or pending)
 - [ ] Test all lookup functions
+- [ ] Test lazy loading triggers correctly
 
 ### Core Functions - Queries
 - [ ] Implement `get_all_items() -> Array[ItemData]`:
@@ -531,14 +558,17 @@ This phase implements the core foundation systems: project structure, player con
 
 ### Core Functions - Instance Creation
 - [ ] Implement `create_item_instance(item_id: String) -> ItemData`:
-  - [ ] Get base item
-  - [ ] Deep copy resource
-  - [ ] Return copy
-- [ ] Implement `create_item_with_durability(item_id: String, durability: int) -> ItemData`:
-  - [ ] Create instance
-  - [ ] Set durability
+  - [ ] Get base item using `get_item()`
+  - [ ] Use `duplicate(true)` for deep copy
+  - [ ] Initialize current_durability if item has durability
+  - [ ] Return copy (modifications won't affect original)
+- [ ] Implement `create_item_with_durability(item_id: String, durability_value: int) -> ItemData`:
+  - [ ] Create instance using `create_item_instance()`
+  - [ ] Set current_durability (clamp between 0 and max durability)
   - [ ] Return instance
 - [ ] Test instance creation
+- [ ] Test instance modifications don't affect original resource
+- [ ] Test durability initialization works correctly
 
 ### Core Functions - Validation
 - [ ] Implement `validate_item(item_id: String) -> bool`:
@@ -556,10 +586,21 @@ This phase implements the core foundation systems: project structure, player con
 - [ ] Test validation uses defaults for optional fields
 
 ### Indexing System
-- [ ] Build items_by_type index
-- [ ] Build items_by_category index
-- [ ] Build search index (optional optimization)
+- [ ] Implement `build_search_indexes()` function:
+  - [ ] Clear existing indexes
+  - [ ] Build name_index (lowercase_name -> Array[ItemData])
+  - [ ] Build tag_index (lowercase_tag -> Array[ItemData])
+  - [ ] Build items_by_type index (ItemType -> Array[ItemData])
+  - [ ] Build items_by_category index (category -> Array[ItemData])
+- [ ] Implement `update_indexes_for_item(item_data: ItemData)` function:
+  - [ ] Add to name_index
+  - [ ] Add to tag_index
+  - [ ] Called when items are registered
+- [ ] Implement `invalidate_search_cache()` function:
+  - [ ] Clear search_cache dictionary
+  - [ ] Called when items are registered/unregistered
 - [ ] Test indexes improve performance
+- [ ] Test indexes update correctly when items added
 
 ### Initialization
 - [ ] Implement `_ready()` function:
