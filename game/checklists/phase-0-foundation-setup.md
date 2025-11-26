@@ -158,7 +158,13 @@ This phase sets up the Godot project, configures project settings, creates the f
 - [ ] Add action: `dig`
   - [ ] Assign default key: Right Mouse Button
   - [ ] Assign controller: Left Trigger
-- [ ] Test all input actions work
+- [ ] Add action: `pause` (optional, can be handled by InputManager)
+  - [ ] Assign default key: Escape
+  - [ ] Assign controller: Start Button
+- [ ] Test all input actions work:
+  - [ ] Verify keyboard inputs register
+  - [ ] Verify controller inputs register (if controller available)
+  - [ ] **Note:** Full input handling will be implemented in Phase 1 via InputManager
 
 ### 8. Autoload Singletons Structure
 - [ ] Plan autoload order (dependencies matter - initialization order is critical)
