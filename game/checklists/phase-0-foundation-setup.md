@@ -117,14 +117,26 @@ This phase sets up the Godot project, configures project settings, creates the f
 ## Project Configuration
 
 ### 6. Pixel Art Configuration
-- [ ] Verify viewport settings (640x360 base resolution)
-- [ ] Test integer scaling (2x, 3x, 4x)
+- [ ] Verify viewport settings (640x360 base resolution):
+  - [ ] Display > Window > Size: 640x360
+  - [ ] Display > Window > Stretch Mode: viewport
+  - [ ] Display > Window > Stretch Aspect: keep
+  - [ ] Display > Window > Stretch Scale Mode: integer
+- [ ] Configure texture filtering:
+  - [ ] Rendering > Textures > Default Texture Filter: Nearest
+  - [ ] This ensures pixel art stays crisp
+- [ ] Configure 2D snapping:
+  - [ ] Rendering > 2D > Snap 2D Transforms to Pixel: Enabled
+  - [ ] Rendering > 2D > Snap 2D Vertices to Pixel: Enabled
+- [ ] Test integer scaling (2x, 3x, 4x):
+  - [ ] Resize window and verify scaling is integer only
+  - [ ] Verify no fractional scaling occurs
 - [ ] Test different screen resolutions:
-  - [ ] 1920x1080 (should scale 3x)
-  - [ ] 1280x720 (should scale 2x)
-  - [ ] 2560x1440 (should scale 4x)
+  - [ ] 1920x1080 (should scale 3x = 1920x1080)
+  - [ ] 1280x720 (should scale 2x = 1280x720)
+  - [ ] 2560x1440 (should scale 4x = 2560x1440)
 - [ ] Verify pixel art stays crisp at all scales
-- [ ] Test with sample pixel art sprite
+- [ ] Test with sample pixel art sprite (create simple test sprite if needed)
 
 ### 7. Input Map Configuration
 - [ ] Open Project Settings > Input Map
